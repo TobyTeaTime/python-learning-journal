@@ -23,12 +23,6 @@ my_array = [ # maze to be ran
     [1, 0, 0]
 ]
 
-# starts runner position at [0][0]
-i = 0 # value of x-position / place in row (which column)
-j = 0 # value of y-position / which row
-
-runnerPos = my_array[i][j] # returns position
-
 rowLength = len(my_array[0]) # returns length of row 0
 rowNumber = len(my_array) # returns how many rows there are (COLUMN HEIGHT)
 
@@ -39,41 +33,32 @@ def printArray(maze): # prints a 2d visualization of the maze
         print()
     print()
 
-def edgeDetect(i, j): # reports if current position is out of bounds
-    if i < 0 or i >= rowNumber:
-        return False
-    if j < 0 or j >= rowLength:
-        return False
+def mazeRunner(maze, i, j): # passes the array along with the coordinates for the current space
+    if i < 0 or i >= rowNumber or j < 0 or j >= rowLength:
+        return False  # out of bounds of the maze, 
+    if maze[i][j] == 1 or maze[i][j] == 2:
+        return False # either a wall or previously visited space
+    if i == rowNumber - 1 and j == rowLength - 1:
+        maze[i][j] = 2
+        return True # reached the endpoint / bottom right of the maze
+    
+    # ^^^base case^^^ if current space is also the space in the furthest down and right, the maze is solved.  
+    
+    maze[i][j] = 2 # marks the current cell as visited
 
-def breadCrumb(i, j): #changes value of current position to 2
-    if runnerPos == 1:
-        my_array[i][j] = 2
+    if mazeRunner(maze, i, j + 1): #right
+        return True
+    if mazeRunner(maze, i + 1, j): #down
+        return True
+    if mazeRunner(maze, i, j - 1): #left
+        return True
+    if mazeRunner(maze, i - 1, j): #up
+        return True
+    
+    # ^^^recursive case^^^ uses recursion to set the coordinates of the space to be used in the function
 
-# ------------------------------------------------------------------------------------------------------- #
-
-def look(i, j, dir): # looks in a direction, changes i, j to match
-    if dir == "up":
-        i = i - 1
-        breadCrumb(i, j)
-    elif dir == "down":
-        i = i + 1
-        breadCrumb(i, j)
-    elif dir =="left":
-        j = j - 1
-        breadCrumb(i, j)
-    elif dir =="right":
-        j = j + 1
-        breadCrumb(i, j)
-
-
-def mazeRunner(maze, i, j): # runs the maze / main
-    edgeDetect(i, j)
-
-    if runnerPos == 0:
-        my_array[i][j] = 2
-        look(i, j, "right")
-    else:
-        print("next step")
+    maze[i][j] = 0 # unmarks current cell
+    return False
 
 
 printArray(my_array)
