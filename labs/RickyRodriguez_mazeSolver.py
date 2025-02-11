@@ -14,13 +14,12 @@ endpoint = [rowlength][rownumber] ([4][4])
 2 = visited
 '''
 
-
-# startpoint = [0]*[0]
-# endpoint = rowlength * rownumber
 my_array = [ # maze to be ran
-    [0, 0, 1],
-    [1, 0, 1],
-    [1, 0, 0]
+    [0, 1, 0, 0, 0],
+    [0, 1, 0, 1, 0],
+    [0, 0, 0, 1, 0],
+    [0, 1, 1, 1, 0],
+    [1, 1, 1, 1, 0]
 ]
 
 rowLength = len(my_array[0]) # returns length of row 0
@@ -60,6 +59,7 @@ def mazeRunner(maze, i, j): # passes the array along with the coordinates for th
     maze[i][j] = 0 # unmarks current cell
     return False
 
+    # ^^^if it finds a dead end, it unmarks the space
 
 printArray(my_array)
 if mazeRunner(my_array, 0, 0):
