@@ -31,6 +31,3 @@ print(HP(rival))
 attack(starter, rival)
 
 print(HP(rival))
-
-
-#
