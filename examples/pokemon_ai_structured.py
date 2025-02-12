@@ -1,5 +1,3 @@
-import tkinter as tk
-from tkinter import messagebox
 import random
 
 # Define Pokémon classes
@@ -13,6 +11,7 @@ class Pokemon:
         self.hp -= damage
         if self.hp < 0:
             self.hp = 0
+        print(f"{self.name} took {damage} damage! {self.name} has {self.hp} HP left.\n")
 
     def is_fainted(self):
         return self.hp <= 0
@@ -33,101 +32,52 @@ vine_whip = Move("Vine Whip", 24)
 charmander = Pokemon("Charmander", 100, [tackle, ember])
 squirtle = Pokemon("Squirtle", 100, [tackle, water_gun])
 
-# GUI Application
-class PokemonBattleApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Pokémon Battle")
-        self.player_pokemon = charmander
-        self.opponent_pokemon = squirtle
+# Battle function
+def battle(player_pokemon, opponent_pokemon):
+    while not player_pokemon.is_fainted() and not opponent_pokemon.is_fainted():
+        print(f"Your Pokémon: {player_pokemon.name} (HP: {player_pokemon.hp})")
+        print(f"Opponent's Pokémon: {opponent_pokemon.name} (HP: {opponent_pokemon.hp})\n")
 
-        # Create GUI elements
-        self.create_widgets()
+        # Display options
+        print("What will you do?")
+        print("1. Battle")
+        print("2. Open Bag")
+        print("3. Switch Pokémon")
+        print("4. Run")
 
-        # Start the battle
-        self.update_display()
+        choice = input("Choose an option (1-4): ")
 
-    def create_widgets(self):
-        # Display Pokémon HP
-        self.player_hp_label = tk.Label(self.root, text=f"{self.player_pokemon.name} HP: {self.player_pokemon.hp}")
-        self.player_hp_label.pack()
+        if choice == "1":
+            # Display moves
+            print("\nChoose a move:")
+            for i, move in enumerate(player_pokemon.moves, start=1):
+                print(f"{i}. {move.name}")
 
-        self.opponent_hp_label = tk.Label(self.root, text=f"{self.opponent_pokemon.name} HP: {self.opponent_pokemon.hp}")
-        self.opponent_hp_label.pack()
+            move_choice = input("Select a move (1-4): ")
+            if move_choice.isdigit() and 1 <= int(move_choice) <= len(player_pokemon.moves):
+                selected_move = player_pokemon.moves[int(move_choice) - 1]
+                print(f"\n{player_pokemon.name} used {selected_move.name}!")
+                opponent_pokemon.take_damage(selected_move.damage)
 
-        # Battle options
-        self.battle_button = tk.Button(self.root, text="Battle", command=self.open_battle_menu)
-        self.battle_button.pack()
+                # Opponent's turn
+                if not opponent_pokemon.is_fainted():
+                    opponent_move = random.choice(opponent_pokemon.moves)
+                    print(f"{opponent_pokemon.name} used {opponent_move.name}!")
+                    player_pokemon.take_damage(opponent_move.damage)
+            else:
+                print("Invalid move choice. Try again.\n")
 
-        self.bag_button = tk.Button(self.root, text="Open Bag", command=self.open_bag)
-        self.bag_button.pack()
+        elif choice in ["2", "3", "4"]:
+            print("This option is not yet implemented. Please choose 'Battle' for now.\n")
+        else:
+            print("Invalid choice. Please select a valid option.\n")
 
-        self.switch_button = tk.Button(self.root, text="Switch Pokémon", command=self.switch_pokemon)
-        self.switch_button.pack()
+    # Determine the winner
+    if player_pokemon.is_fainted():
+        print(f"{player_pokemon.name} fainted! You lost the battle.")
+    else:
+        print(f"{opponent_pokemon.name} fainted! You won the battle!")
 
-        self.run_button = tk.Button(self.root, text="Run", command=self.run)
-        self.run_button.pack()
-
-        # Move selection menu (hidden initially)
-        self.move_menu = tk.Frame(self.root)
-        self.move_buttons = []
-        for i, move in enumerate(self.player_pokemon.moves):
-            button = tk.Button(self.move_menu, text=move.name, command=lambda m=move: self.use_move(m))
-            button.pack()
-            self.move_buttons.append(button)
-        self.move_menu.pack_forget()
-
-    def update_display(self):
-        self.player_hp_label.config(text=f"{self.player_pokemon.name} HP: {self.player_pokemon.hp}")
-        self.opponent_hp_label.config(text=f"{self.opponent_pokemon.name} HP: {self.opponent_pokemon.hp}")
-
-        # Check for fainted Pokémon
-        if self.player_pokemon.is_fainted():
-            messagebox.showinfo("Battle Over", f"{self.player_pokemon.name} fainted! You lost the battle.")
-            self.root.quit()
-        elif self.opponent_pokemon.is_fainted():
-            messagebox.showinfo("Battle Over", f"{self.opponent_pokemon.name} fainted! You won the battle!")
-            self.root.quit()
-
-    def open_battle_menu(self):
-        # Hide main buttons and show move selection
-        self.battle_button.pack_forget()
-        self.bag_button.pack_forget()
-        self.switch_button.pack_forget()
-        self.run_button.pack_forget()
-        self.move_menu.pack()
-
-    def use_move(self, move):
-        # Player's turn
-        print(f"{self.player_pokemon.name} used {move.name}!")
-        self.opponent_pokemon.take_damage(move.damage)
-        self.update_display()
-
-        # Opponent's turn (if not fainted)
-        if not self.opponent_pokemon.is_fainted():
-            opponent_move = random.choice(self.opponent_pokemon.moves)
-            print(f"{self.opponent_pokemon.name} used {opponent_move.name}!")
-            self.player_pokemon.take_damage(opponent_move.damage)
-            self.update_display()
-
-        # Hide move menu and show main buttons
-        self.move_menu.pack_forget()
-        self.battle_button.pack()
-        self.bag_button.pack()
-        self.switch_button.pack()
-        self.run_button.pack()
-
-    def open_bag(self):
-        messagebox.showinfo("Open Bag", "This feature is not yet implemented.")
-
-    def switch_pokemon(self):
-        messagebox.showinfo("Switch Pokémon", "This feature is not yet implemented.")
-
-    def run(self):
-        messagebox.showinfo("Run", "This feature is not yet implemented.")
-
-# Run the application
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = PokemonBattleApp(root)
-    root.mainloop()
+# Start the battle
+print("A wild Squirtle appeared!")
+battle(charmander, squirtle)
