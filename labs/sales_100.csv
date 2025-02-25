@@ -1,0 +1,11 @@
+sale_id,sale_date,amount,product
+0,2024-01-23,128.45,Thingamajig
+1,2024-01-21,243.49,Doohickey
+2,2024-01-17,145.35,Doohickey
+3,2024-01-21,283.03,Doohickey
+4,2024-01-19,295.65,Gadget
+5,2024-01-21,187.63,Gadget
+6,2024-01-19,190.24,Gadget
+7,2024-01-19,265.47,Doohickey
+8,2024-01-24,118.05,Gadget
+9,2024-01-17,186.64,Widget
